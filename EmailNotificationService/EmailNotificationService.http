@@ -1,6 +1,12 @@
 @EmailNotificationService_HostAddress = http://localhost:5242
 
-GET {{EmailNotificationService_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{EmailNotificationService_HostAddress}}/api/emails
+Content-Type: application/json
+
+{
+  "to": "test@example.com",
+  "subject": "Hello from RabbitMQ",
+  "body": "This email was queued via RabbitMQ and will be consumed by the Worker."
+}
 
 ###

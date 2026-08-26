@@ -12,3 +12,6 @@ obj/
 ## OS files
 .DS_Store
 Thumbs.db
+
+## Serilog file sink output
+logs/

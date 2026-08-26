@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="EmailNotificationService/EmailAPI.csproj" />
+  <Project Path="EmailNotificationService.Contracts/EmailNotificationService.Contracts.csproj" />
+  <Project Path="EmailNotificationService.Worker/EmailNotificationService.Worker.csproj" />
 </Solution>
