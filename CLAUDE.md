@@ -10,7 +10,7 @@ A portfolio piece demonstrating RabbitMQ messaging-queue skills: an HTTP API pub
 
 Run all commands from the repository root (where `EmailNotificationService.slnx` lives).
 
-- Start the broker: `docker compose up -d` (RabbitMQ with the management plugin; UI at http://localhost:15672, credentials `appuser` / `apppassword123!`, vhost `/notifications`)
+- Start the broker and log viewer: `docker compose up -d` (RabbitMQ with the management plugin, UI at http://localhost:15672, credentials `appuser` / `apppassword123!`, vhost `/notifications`; and Seq, UI at http://localhost:8341)
 - Build the whole solution: `dotnet build EmailNotificationService.slnx`
 - Run the Api (producer): `dotnet run --project EmailNotificationService`
 - Run the Worker (consumer), in a separate terminal: `dotnet run --project EmailNotificationService.Worker`
@@ -49,7 +49,7 @@ A topic exchange is used (rather than direct) so future message types could bind
 
 ### Structured logging (Serilog)
 
-Both processes use Serilog (bootstrap logger in `Program.cs`, then `ReadFrom.Configuration`), writing to console and to a rolling daily file (`logs/api-*.log` / `logs/worker-*.log`, gitignored, 14-day retention). The `SendEmailMessage.MessageId` is pushed onto Serilog's `LogContext` at publish time and again at consume time (read back from the AMQP message's `CorrelationId` property), so every log line for a given email — across both processes' log files — carries the same `MessageId` property and can be traced end-to-end by grepping one GUID.
+Both processes use Serilog (bootstrap logger in `Program.cs`, then `ReadFrom.Configuration`), writing to three sinks: console, a rolling daily file (`logs/api-*.log` / `logs/worker-*.log`, gitignored, 14-day retention), and Seq (`Seq:ServerUrl` in each process's `appsettings.json`, defaulting to `http://localhost:5341`, the ingestion endpoint of the `seq` service in `docker-compose.yml`). The `SendEmailMessage.MessageId` is pushed onto Serilog's `LogContext` at publish time and again at consume time (read back from the AMQP message's `CorrelationId` property), so every log line for a given email — across both processes — carries the same `MessageId` property. Seq's UI (http://localhost:8341) is the easiest way to browse and filter this: search `MessageId = '<guid>'` there to trace one email end-to-end across the Api and Worker without grepping log files by hand. The file logs remain as a secondary, always-available record; Seq only shows events written after it was wired in — it doesn't ingest history from the existing `.log` files.
 
 ### Configuration
 
