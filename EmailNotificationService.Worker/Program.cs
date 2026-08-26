@@ -18,7 +18,7 @@ try
         .Enrich.FromLogContext()
         .Enrich.WithMachineName()
         .Enrich.WithThreadId()
-        .Enrich.WithProperty("Application", "Worker")
+        .Enrich.WithProperty("Application", "EmailWorker")
         .WriteTo.Console(outputTemplate:
             "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj} {Properties:j}{NewLine}{Exception}")
         .WriteTo.File("logs/worker-.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 14)
